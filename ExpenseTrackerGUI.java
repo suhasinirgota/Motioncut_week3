@@ -155,13 +155,16 @@ public class ExpenseTrackerGUI extends Application {
             this.category = category;
             this.date = date;
         }
+        
         @Override
         public String toString() {
             return "Description: " + description + ", Amount: $" + amount + ", Category: " + category + ", Date: " + date;
         }
+        
         public String toFileString() {
             return description + "|" + amount + "|" + category + "|" + date;
         }
+        
         public static Expense fromString(String line) {
             String[] parts = line.split("\\|");
             String description = parts[0];
