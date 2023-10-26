@@ -67,14 +67,18 @@ public class ExpenseTrackerGUI extends Application {
       
         // Event Handlers
         addButton.setOnAction(event -> {
-            String description = descriptionField.getText();
-            double amount = Double.parseDouble(amountField.getText());
-            String category = categoryComboBox.getValue();
-            LocalDate date = datePicker.getValue();
-            expenses.add(new Expense(description, amount, category, date));
-            updateExpenseList(expenseListArea);
-            clearInputFields(descriptionField, amountField, datePicker);
-        });
+    String description = descriptionField.getText();
+    String amountText = amountField.getText();
+    String category = categoryComboBox.getValue();
+    LocalDate date = datePicker.getValue();
+
+    if (isValidInput(description, amountText)) {
+        double amount = Double.parseDouble(amountText);
+        expenses.add(new Expense(description, amount, category, date));
+        updateExpenseList(expenseListArea);
+        clearInputFields(descriptionField, amountField, datePicker);
+    }
+});
         categoryFilterComboBox.setOnAction(event -> {
             String selectedCategory = categoryFilterComboBox.getValue();
             LocalDate selectedDate = datePicker.getValue();
@@ -129,6 +133,33 @@ public class ExpenseTrackerGUI extends Application {
             }
         }
     }
+    private boolean isValidInput(String description, String amountText) {
+    if (description.isEmpty() || amountText.isEmpty()) {
+        displayError("Description and Amount are required fields.");
+        return false;
+    }
+
+    try {
+        double amount = Double.parseDouble(amountText);
+        if (amount <= 0) {
+            displayError("Amount must be a positive number.");
+            return false;
+        }
+    } catch (NumberFormatException e) {
+        displayError("Amount must be a valid number.");
+        return false;
+    }
+
+    return true;
+}
+
+private void displayError(String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle("Input Error");
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+}
     private double calculateTotalExpenses(String category, LocalDate selectedDate) {
         double total = 0.0;
         total = expenses.stream()
